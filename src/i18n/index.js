@@ -8,30 +8,34 @@ if (lang == "auto") {
   lang = lang.substr(0, 2); // Only use the first two characters (e.g. "en")
 }
 
-// Import translation files here
-import enMessages from "./locales/en.json";
-import zhMessages from "./locales/zh.json";
-import deMessages from "./locales/de.json";
-import ruMessages from "./locales/ru.json";
-import viMessages from "./locales/vi.json";
-import frMessages from "./locales/fr.json";
-import itMessages from "./locales/it.json";
-import koMessages from "./locales/ko.json";
-import esMessages from "./locales/es.json";
-import jaMessages from "./locales/ja.json";
-
-const messages = {
-  en: enMessages,
-  zh: zhMessages,
-  de: deMessages,
-  ru: ruMessages,
-  vi: viMessages,
-  it: itMessages,
-  fr: frMessages,
-  ko: koMessages,
-  es: esMessages,
-  ja: jaMessages,
+// Lazy-load translation files to reduce initial bundle size
+const loaders = {
+  en: () => import(/* webpackChunkName: "locale-en" */ "./locales/en.json"),
+  zh: () => import(/* webpackChunkName: "locale-zh" */ "./locales/zh.json"),
+  de: () => import(/* webpackChunkName: "locale-de" */ "./locales/de.json"),
+  ru: () => import(/* webpackChunkName: "locale-ru" */ "./locales/ru.json"),
+  vi: () => import(/* webpackChunkName: "locale-vi" */ "./locales/vi.json"),
+  fr: () => import(/* webpackChunkName: "locale-fr" */ "./locales/fr.json"),
+  it: () => import(/* webpackChunkName: "locale-it" */ "./locales/it.json"),
+  ko: () => import(/* webpackChunkName: "locale-ko" */ "./locales/ko.json"),
+  es: () => import(/* webpackChunkName: "locale-es" */ "./locales/es.json"),
+  ja: () => import(/* webpackChunkName: "locale-ja" */ "./locales/ja.json"),
 };
+
+const messages = {};
+const loader = loaders[lang] || loaders.en;
+try {
+  const mod = await loader();
+  messages[lang] = mod.default || mod;
+  if (lang !== "en") {
+    const en = await loaders.en();
+    messages.en = en.default || en;
+  }
+} catch (e) {
+  const en = await loaders.en();
+  messages.en = en.default || en;
+  lang = "en";
+}
 
 const i18n = createI18n({
   legacy: false, // Vuetify does not support the legacy mode of vue-i18n

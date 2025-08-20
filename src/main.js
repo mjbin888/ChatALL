@@ -4,7 +4,7 @@ import i18n from "./i18n";
 import store from "./store";
 import { createVueI18nAdapter } from "vuetify/locale/adapters/vue-i18n";
 import { useI18n } from "vue-i18n";
-import "material-design-icons/iconfont/material-icons.css";
+// Remove unused Google Material Icons font import to avoid loading large iconfont
 import VueMatomo from "vue-matomo";
 import VueShortkey from "vue3-shortkey";
 import { resolveTheme, applyTheme } from "./theme";
@@ -15,6 +15,7 @@ import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { VDataTable } from "vuetify/labs/VDataTable";
+import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
 
 // VMdPreview
 import VMdPreview from "@kangc/v-md-editor/lib/preview";
@@ -48,6 +49,11 @@ applyTheme(defaultTheme);
 const vuetify = createVuetify({
   components: { ...components, VDataTable },
   directives,
+  icons: {
+    defaultSet: "mdi",
+    aliases,
+    sets: { mdi },
+  },
   locale: {
     adapter: createVueI18nAdapter({ i18n, useI18n }),
   },
@@ -85,14 +91,7 @@ const vuetify = createVuetify({
   },
 });
 
-// Inject geetest script for iFlytek Spark
-fetch("https://static.geetest.com/g5/gd.js")
-  .then((response) => response.text())
-  .then((text) => {
-    const script = document.createElement("script");
-    script.textContent = text;
-    document.head.appendChild(script);
-  });
+// Geetest script will be loaded on-demand by Spark bot instead of globally
 
 createApp(App)
   .use(i18n)

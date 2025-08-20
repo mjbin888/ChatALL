@@ -127,7 +127,8 @@ import FindModal from "@/components/FindModal.vue";
 import ShortcutGuide from "@/components/ShortcutGuide/ShortcutGuide.vue";
 
 // Styles
-import "@mdi/font/css/materialdesignicons.css";
+// Removed heavy @mdi font CSS to reduce bundle size. If icons are required,
+// consider switching to @mdi/js with SVGs per-component.
 
 const { ipcRenderer } = window.require("electron");
 
