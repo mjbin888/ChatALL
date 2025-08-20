@@ -44,6 +44,13 @@ export default class SparkBot extends Bot {
   }
 
   async getGtToken() {
+    // Load Geetest script on-demand instead of at app startup
+    if (!window.initGeeGuard) {
+      const text = await fetch("https://static.geetest.com/g5/gd.js").then((r) => r.text());
+      const script = document.createElement("script");
+      script.textContent = text;
+      document.head.appendChild(script);
+    }
     return new Promise((resolve, reject) => {
       window.initGeeGuard(
         {

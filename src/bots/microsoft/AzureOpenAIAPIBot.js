@@ -1,6 +1,6 @@
 import LangChainBot from "@/bots/LangChainBot";
 import store from "@/store";
-import { ChatOpenAI } from "langchain/chat_models/openai";
+// Defer importing langchain ChatOpenAI to avoid pulling it into initial bundle
 
 export default class AzureOpenAIAPIBot extends LangChainBot {
   static _brandId = "azureOpenaiApi";
@@ -21,6 +21,9 @@ export default class AzureOpenAIAPIBot extends LangChainBot {
     ) {
       this.constructor._isAvailable = false;
     } else {
+      const { ChatOpenAI } = await import(
+        /* webpackChunkName: "langchain-openai" */ "langchain/chat_models/openai"
+      );
       const chatModel = new ChatOpenAI({
         azureOpenAIApiKey: store.state.azureOpenaiApi.azureApiKey,
         azureOpenAIApiInstanceName:
